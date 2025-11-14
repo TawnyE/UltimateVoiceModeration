@@ -2,7 +2,7 @@ name: UltimateVoiceModeration
 version: 1.0.0
 main: ret.tawny.ultimatevoicemoderation.UltimateVoiceModerationPlugin
 api-version: 1.16
-author: Jules
+author: Jules [AI]
 description: A fully server-side voice and text moderation system for Minecraft.
 softdepend: [voicechat]
 commands:

@@ -1,10 +1,11 @@
 package ret.tawny.ultimatevoicemoderation.voice;
 
+import de.maxhenkel.voicechat.api.events.MicrophonePacketEvent;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import ret.tawny.ultimatevoicemoderation.UltimateVoiceModerationPlugin;
 import ret.tawny.ultimatevoicemoderation.moderation.ModerationEngine;
 import ret.tawny.ultimatevoicemoderation.moderation.Violation;
-import ret.tawny.ultimatevoicemoderation.transcription.LocalTranscriptionProvider;
 import ret.tawny.ultimatevoicemoderation.transcription.VoiceTranscriptionProvider;
 
 import java.util.Optional;
@@ -19,17 +20,26 @@ public class VoiceSessionListener implements Listener {
     public VoiceSessionListener(UltimateVoiceModerationPlugin plugin) {
         this.plugin = plugin;
         this.moderationEngine = plugin.getModerationEngine();
-        this.transcriptionProvider = new LocalTranscriptionProvider();
+        this.transcriptionProvider = plugin.getVoiceTranscriptionProvider();
     }
 
-    // In a real implementation, this would be an event handler for a voice chat plugin's event.
-    public void onPlayerSpeaking(UUID playerUuid, byte[] audioData) {
+    @EventHandler
+    public void onPlayerVoicePacket(MicrophonePacketEvent event) {
         if (!plugin.getConfigManager().isVoiceModerationEnabled()) {
             return;
         }
 
+        if (event.getSenderConnection() == null) {
+            return;
+        }
+        UUID playerUuid = event.getSenderConnection().getPlayer().getUuid();
+        byte[] audioData = event.getPacket().getOpusEncodedData();
+
         plugin.getTaskScheduler().runAsync(() -> {
             transcriptionProvider.transcribe(audioData).thenAccept(transcript -> {
+                if (transcript.isEmpty()) {
+                    return;
+                }
                 Optional<Violation> violation = moderationEngine.processText(playerUuid, transcript);
                 if (violation.isPresent()) {
                     plugin.getAuditLogManager().logViolation(violation.get());

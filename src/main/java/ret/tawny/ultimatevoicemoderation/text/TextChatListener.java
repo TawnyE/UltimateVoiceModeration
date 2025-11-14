@@ -33,6 +33,13 @@ public class TextChatListener implements Listener {
             plugin.getAuditLogManager().logViolation(violation.get());
             plugin.getServer().getScheduler().runTask(plugin, () -> {
                 plugin.getActionManager().dispatchActions(violation.get());
+                plugin.getServer().getOnlinePlayers().forEach(player -> {
+                    if (player.hasPermission("ultimatevoicemoderation.staff")) {
+                        player.sendMessage(plugin.getMessageManager().getMessage("staff.violation_notification",
+                                "player", event.getPlayer().getName(),
+                                "category", violation.get().getCategory().name()));
+                    }
+                });
             });
         }
     }

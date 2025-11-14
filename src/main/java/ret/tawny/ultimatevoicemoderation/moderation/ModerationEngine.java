@@ -1,6 +1,9 @@
 package ret.tawny.ultimatevoicemoderation.moderation;
 
+import org.apache.commons.codec.language.DoubleMetaphone;
 import ret.tawny.ultimatevoicemoderation.UltimateVoiceModerationPlugin;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -10,10 +13,12 @@ public class ModerationEngine {
 
     private final UltimateVoiceModerationPlugin plugin;
     private final PatternRepository patternRepository;
+    private final DoubleMetaphone doubleMetaphone = new DoubleMetaphone();
 
     public ModerationEngine(UltimateVoiceModerationPlugin plugin, PatternRepository patternRepository) {
         this.plugin = plugin;
         this.patternRepository = patternRepository;
+        doubleMetaphone.setMaxCodeLen(10);
     }
 
     public Optional<Violation> processText(UUID playerUuid, String text) {
@@ -36,10 +41,16 @@ public class ModerationEngine {
         // 2. Approximate / fuzzy matching
         String[] words = text.split("\\s+");
         for (String word : words) {
+            // Levenshtein distance
             for (String softBannedWord : patternRepository.getSoftBannedWords()) {
                 if (levenshteinDistance(word, softBannedWord) <= 2) {
                     return Optional.of(new Violation(playerUuid, ViolationCategory.EXPLICIT_LANGUAGE, 0.75, word));
                 }
+            }
+            // Phonetic matching
+            String phoneticCode = doubleMetaphone.encode(word);
+            if (patternRepository.getPhoneticWords().containsKey(phoneticCode)) {
+                return Optional.of(new Violation(playerUuid, ViolationCategory.EXPLICIT_LANGUAGE, 0.85, word));
             }
         }
 

@@ -2,10 +2,12 @@ package ret.tawny.ultimatevoicemoderation.voice;
 
 import org.bukkit.plugin.Plugin;
 import ret.tawny.ultimatevoicemoderation.UltimateVoiceModerationPlugin;
+import ret.tawny.ultimatevoicemoderation.voice.api.VoiceApi;
 
 public class VoiceIntegrationManager {
 
     private final UltimateVoiceModerationPlugin plugin;
+    private VoiceApi voiceApi;
     private boolean voiceChatPluginFound = false;
 
     public VoiceIntegrationManager(UltimateVoiceModerationPlugin plugin) {
@@ -17,9 +19,9 @@ public class VoiceIntegrationManager {
         if (voiceChatPlugin != null && voiceChatPlugin.isEnabled()) {
             plugin.getLogger().info("Found voice chat plugin, hooking in.");
             voiceChatPluginFound = true;
-            // In a real implementation, we would register our voice listener here.
-            // For now, we'll just simulate this.
-            // plugin.getServer().getPluginManager().registerEvents(new VoiceSessionListener(plugin), plugin);
+            voiceApi = new VoiceApi(plugin);
+            voiceApi.init();
+            plugin.getServer().getPluginManager().registerEvents(new VoiceSessionListener(plugin), plugin);
         } else {
             plugin.getLogger().warning("No voice chat plugin found. Voice moderation will be disabled.");
         }
@@ -27,5 +29,15 @@ public class VoiceIntegrationManager {
 
     public boolean isVoiceChatPluginFound() {
         return voiceChatPluginFound;
+    }
+
+    public VoiceApi getVoiceApi() {
+        return voiceApi;
+    }
+
+    public void close() {
+        if (voiceApi != null) {
+            voiceApi.close();
+        }
     }
 }

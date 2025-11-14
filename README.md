@@ -20,6 +20,17 @@ A fully server-side voice and text moderation system for Minecraft Java Edition.
 5.  Configure the plugin to your liking by editing the `config.yml` and `messages.yml` files.
 6.  Restart your server or use the `/uvm reload` command to apply the changes.
 
+## Offline Speech-to-Text Setup
+
+To enable voice moderation, you will need to download a Vosk speech-to-text model and place it in the plugin's data folder.
+
+1.  Download a Vosk model from the [Vosk models page](https://alphacephei.com/vosk/models). The "vosk-model-small-en-us" model is a good starting point.
+2.  Create a directory named `vosk-model` inside the `UltimateVoiceModeration` plugin directory.
+3.  Extract the contents of the downloaded model archive into the `vosk-model` directory.
+4.  Restart your server.
+
+**Note:** Using a local speech-to-text model can be resource-intensive, especially on servers with a large number of players. It is recommended to use a lightweight model and to monitor your server's performance after enabling voice moderation.
+
 ## Configuration
 
 The `config.yml` file is extensively documented, allowing you to customize every aspect of the plugin. Here are some of the key settings:

@@ -11,3 +11,25 @@ player:
 # Messages sent to staff
 staff:
   violation_notification: "&7[UVM] &fPlayer &e%player%&f's message was blocked for: &c%category%"
+
+# Command messages
+command:
+  usage: "&cUsage: /uvm <reload|inspect|mutevoice|test>"
+  reload: "&aConfiguration, patterns, and messages reloaded."
+  not_implemented: "&cThe %command% command is not yet implemented."
+  unknown: "&cUnknown command. Use /uvm for usage."
+  test:
+    usage: "&cUsage: /uvm test <message>"
+    violation: "&cViolation detected: %category% (Confidence: %confidence%)"
+    no_violation: "&aNo violation detected."
+  mutevoice:
+    usage: "&cUsage: /uvm mutevoice <player> [duration]"
+    player_not_found: "&cPlayer %player% not found."
+    muted: "&aPlayer %player% has been voice muted."
+    unmuted: "&aPlayer %player% has been unmuted."
+  inspect:
+    usage: "&cUsage: /uvm inspect <player> [page]"
+    player_not_found: "&cPlayer %player% not found."
+    invalid_page: "&cInvalid page number."
+    no_history: "&aNo violation history found for this player."
+    error: "&cAn error occurred while reading the audit log."

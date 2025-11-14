@@ -12,6 +12,7 @@ import ret.tawny.ultimatevoicemoderation.scheduler.TaskSchedulerFactory;
 import ret.tawny.ultimatevoicemoderation.text.TextChatListener;
 import ret.tawny.ultimatevoicemoderation.transcription.LocalTranscriptionProvider;
 import ret.tawny.ultimatevoicemoderation.transcription.VoiceTranscriptionProvider;
+import ret.tawny.ultimatevoicemoderation.util.MessageManager;
 import ret.tawny.ultimatevoicemoderation.voice.VoiceIntegrationManager;
 import ret.tawny.ultimatevoicemoderation.voice.VoiceSessionListener;
 
@@ -26,11 +27,15 @@ public final class UltimateVoiceModerationPlugin extends JavaPlugin {
     private VoiceTranscriptionProvider voiceTranscriptionProvider;
     private ActionManager actionManager;
     private AuditLogManager auditLogManager;
+    private MessageManager messageManager;
 
     @Override
     public void onEnable() {
         configManager = new ConfigManager(this);
         configManager.loadConfig();
+
+        messageManager = new MessageManager(this);
+        messageManager.loadMessages();
 
         patternRepository = new PatternRepository(this);
         patternRepository.loadPatterns();
@@ -39,7 +44,7 @@ public final class UltimateVoiceModerationPlugin extends JavaPlugin {
 
         taskScheduler = TaskSchedulerFactory.createScheduler(this);
 
-        voiceTranscriptionProvider = new LocalTranscriptionProvider();
+        voiceTranscriptionProvider = new LocalTranscriptionProvider(this);
         voiceSessionListener = new VoiceSessionListener(this);
         voiceIntegrationManager = new VoiceIntegrationManager(this);
         voiceIntegrationManager.init();
@@ -56,6 +61,9 @@ public final class UltimateVoiceModerationPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (voiceIntegrationManager != null) {
+            voiceIntegrationManager.close();
+        }
         if (taskScheduler != null) {
             taskScheduler.cancelTasks();
         }
@@ -78,6 +86,10 @@ public final class UltimateVoiceModerationPlugin extends JavaPlugin {
         return moderationEngine;
     }
 
+    public VoiceIntegrationManager getVoiceIntegrationManager() {
+        return voiceIntegrationManager;
+    }
+
     public VoiceTranscriptionProvider getVoiceTranscriptionProvider() {
         return voiceTranscriptionProvider;
     }
@@ -88,5 +100,9 @@ public final class UltimateVoiceModerationPlugin extends JavaPlugin {
 
     public AuditLogManager getAuditLogManager() {
         return auditLogManager;
+    }
+
+    public MessageManager getMessageManager() {
+        return messageManager;
     }
 }

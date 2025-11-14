@@ -19,9 +19,8 @@ public class VoiceIntegrationManager {
         if (voiceChatPlugin != null && voiceChatPlugin.isEnabled()) {
             plugin.getLogger().info("Found voice chat plugin, hooking in.");
             voiceChatPluginFound = true;
-            voiceApi = new VoiceApi(plugin);
+            voiceApi = new VoiceApi(plugin, new VoiceSessionListener(plugin));
             voiceApi.init();
-            plugin.getServer().getPluginManager().registerEvents(new VoiceSessionListener(plugin), plugin);
         } else {
             plugin.getLogger().warning("No voice chat plugin found. Voice moderation will be disabled.");
         }

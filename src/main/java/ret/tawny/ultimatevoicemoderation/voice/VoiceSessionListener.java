@@ -1,8 +1,6 @@
 package ret.tawny.ultimatevoicemoderation.voice;
 
 import de.maxhenkel.voicechat.api.events.MicrophonePacketEvent;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import ret.tawny.ultimatevoicemoderation.UltimateVoiceModerationPlugin;
 import ret.tawny.ultimatevoicemoderation.moderation.ModerationEngine;
 import ret.tawny.ultimatevoicemoderation.moderation.Violation;
@@ -11,7 +9,7 @@ import ret.tawny.ultimatevoicemoderation.transcription.VoiceTranscriptionProvide
 import java.util.Optional;
 import java.util.UUID;
 
-public class VoiceSessionListener implements Listener {
+public class VoiceSessionListener {
 
     private final UltimateVoiceModerationPlugin plugin;
     private final ModerationEngine moderationEngine;
@@ -23,7 +21,6 @@ public class VoiceSessionListener implements Listener {
         this.transcriptionProvider = plugin.getVoiceTranscriptionProvider();
     }
 
-    @EventHandler
     public void onPlayerVoicePacket(MicrophonePacketEvent event) {
         if (!plugin.getConfigManager().isVoiceModerationEnabled()) {
             return;
